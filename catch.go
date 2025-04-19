@@ -17,12 +17,7 @@ func CommandCatch(args ...string) error {
 		return nil
 	}
 
-	err := printCatch(args[0])
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return printCatch(args[0])
 }
 
 func printCatch(pokemon string) error {

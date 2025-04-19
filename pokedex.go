@@ -5,15 +5,6 @@ import (
 )
 
 func CommandPokedex(...string) error {
-	err := printPokedex()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func printPokedex() error {
 	fmt.Println("Your Pokedex:")
 
 	if len(CaughtPokemon) == 0 {

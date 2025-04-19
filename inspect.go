@@ -36,12 +36,7 @@ func CommandInspect(args ...string) error {
 		return nil
 	}
 
-	err := printInspect(args[0])
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return printInspect(args[0])
 }
 
 func printInspect(pokemon string) error {

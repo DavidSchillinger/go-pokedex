@@ -17,12 +17,7 @@ var page = -1
 func CommandMapNext(_ ...string) error {
 	page++
 
-	err := printMap(page)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return printMap(page)
 }
 
 func CommandMapBack(_ ...string) error {
@@ -33,12 +28,7 @@ func CommandMapBack(_ ...string) error {
 
 	page--
 
-	err := printMap(page)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return printMap(page)
 }
 
 func printMap(page int) error {
