@@ -9,7 +9,7 @@ type pokemonDetailResponse struct {
 	Height int           `json:"height"`
 	Weight int           `json:"weight"`
 	Stats  []pokemonStat `json:"stats"`
-	Type   []pokemonType `json:"types"`
+	Types  []pokemonType `json:"types"`
 }
 
 type pokemonStat struct {
@@ -60,7 +60,7 @@ func printInspect(pokemon string) error {
 		fmt.Println(" -", stat.Stat.Name+":", stat.BaseStat)
 	}
 	fmt.Println("Types:")
-	for _, typ := range data.Type {
+	for _, typ := range data.Types {
 		fmt.Println(" -", typ.Type.Name)
 	}
 
