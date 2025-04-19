@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
@@ -46,29 +45,21 @@ func CommandInspect(args ...string) error {
 }
 
 func printInspect(pokemon string) error {
-	data, err := CachedFetch("https://pokeapi.co/api/v2/pokemon/" + pokemon)
+	data := pokemonDetailResponse{}
+	err := CachedFetch("https://pokeapi.co/api/v2/pokemon/"+pokemon, &data)
 	if err != nil {
 		return err
 	}
 
-	return processPokemonDetailData(data)
-}
-
-func processPokemonDetailData(data []byte) error {
-	response := pokemonDetailResponse{}
-	if err := json.Unmarshal(data, &response); err != nil {
-		return err
-	}
-
-	fmt.Println("Name:", response.Name)
-	fmt.Println("Height:", response.Height)
-	fmt.Println("Weight:", response.Weight)
+	fmt.Println("Name:", data.Name)
+	fmt.Println("Height:", data.Height)
+	fmt.Println("Weight:", data.Weight)
 	fmt.Println("Stats:")
-	for _, stat := range response.Stats {
+	for _, stat := range data.Stats {
 		fmt.Println(" -", stat.Stat.Name+":", stat.BaseStat)
 	}
 	fmt.Println("Types:")
-	for _, typ := range response.Type {
+	for _, typ := range data.Type {
 		fmt.Println(" -", typ.Type.Name)
 	}
 

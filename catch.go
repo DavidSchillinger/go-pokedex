@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
@@ -29,22 +28,14 @@ func CommandCatch(args ...string) error {
 func printCatch(pokemon string) error {
 	fmt.Println("Throwing a Pokeball at " + pokemon + "...")
 
-	data, err := CachedFetch("https://pokeapi.co/api/v2/pokemon/" + pokemon)
+	data := pokemonResponse{}
+	err := CachedFetch("https://pokeapi.co/api/v2/pokemon/"+pokemon, &data)
 	if err != nil {
 		return err
 	}
 
-	return processPokemonData(data)
-}
-
-func processPokemonData(data []byte) error {
-	response := pokemonResponse{}
-	if err := json.Unmarshal(data, &response); err != nil {
-		return err
-	}
-
-	fmt.Println(response.Name, "was caught!")
-	CaughtPokemon[response.Name] = true
+	fmt.Println(data.Name, "was caught!")
+	CaughtPokemon[data.Name] = true
 
 	return nil
 }

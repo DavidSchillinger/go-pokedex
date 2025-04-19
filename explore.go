@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
@@ -27,22 +26,14 @@ func CommandExplore(args ...string) error {
 
 	fmt.Println("Exploring " + area + "...")
 
-	data, err := CachedFetch("https://pokeapi.co/api/v2/location-area/" + area)
+	data := locationAreaDetailResponse{}
+	err := CachedFetch("https://pokeapi.co/api/v2/location-area/"+area, &data)
 	if err != nil {
 		return err
 	}
 
-	return processEncounterData(data)
-}
-
-func processEncounterData(data []byte) error {
-	response := locationAreaDetailResponse{}
-	if err := json.Unmarshal(data, &response); err != nil {
-		return err
-	}
-
 	fmt.Println("Found Pokemon:")
-	for _, encounter := range response.PokemonEncounters {
+	for _, encounter := range data.PokemonEncounters {
 		fmt.Println(" -", encounter.Pokemon.Name)
 	}
 
