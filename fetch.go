@@ -7,34 +7,37 @@ import (
 	"net/http"
 )
 
-func CachedFetch[T any](url string, out *T) error {
+func Fetch[T interface{}](url string) (T, error) {
+	var zero T
+
 	if data, ok := GlobalCache.Get(url); ok {
-		return unmarshal(data, out)
+		return unmarshal[T](data)
 	}
 
 	res, err := http.Get(url)
 	if err != nil {
-		return err
+		return zero, err
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
-		return fmt.Errorf("expected status OK, got %v", res.Status)
+		return zero, fmt.Errorf("expected status OK, got %v", res.Status)
 	}
 
 	data, err := io.ReadAll(res.Body)
 	if err != nil {
-		return err
+		return zero, err
 	}
 
 	GlobalCache.Add(url, data)
 
-	return unmarshal(data, out)
+	return unmarshal[T](data)
 }
 
-func unmarshal[T any](data []byte, out *T) error {
+func unmarshal[T interface{}](data []byte) (T, error) {
+	var out T
 	if err := json.Unmarshal(data, &out); err != nil {
-		return err
+		return out, err
 	}
-	return nil
+	return out, nil
 }

@@ -45,8 +45,9 @@ func CommandInspect(args ...string) error {
 }
 
 func printInspect(pokemon string) error {
-	data := pokemonDetailResponse{}
-	err := CachedFetch("https://pokeapi.co/api/v2/pokemon/"+pokemon, &data)
+	data, err := Fetch[pokemonDetailResponse](
+		"https://pokeapi.co/api/v2/pokemon/" + pokemon,
+	)
 	if err != nil {
 		return err
 	}

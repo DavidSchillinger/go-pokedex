@@ -26,8 +26,9 @@ func CommandExplore(args ...string) error {
 
 	fmt.Println("Exploring " + area + "...")
 
-	data := locationAreaDetailResponse{}
-	err := CachedFetch("https://pokeapi.co/api/v2/location-area/"+area, &data)
+	data, err := Fetch[locationAreaDetailResponse](
+		"https://pokeapi.co/api/v2/location-area/" + area,
+	)
 	if err != nil {
 		return err
 	}

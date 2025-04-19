@@ -42,9 +42,9 @@ func CommandMapBack(_ ...string) error {
 }
 
 func printMap(page int) error {
-	url := fmt.Sprintf("https://pokeapi.co/api/v2/location-area?limit=%d&offset=%d", 20, page*20)
-	data := locationAreaResponse{}
-	err := CachedFetch(url, &data)
+	data, err := Fetch[locationAreaResponse](
+		fmt.Sprintf("https://pokeapi.co/api/v2/location-area?limit=%d&offset=%d", 20, page*20),
+	)
 	if err != nil {
 		return err
 	}

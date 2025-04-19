@@ -28,8 +28,9 @@ func CommandCatch(args ...string) error {
 func printCatch(pokemon string) error {
 	fmt.Println("Throwing a Pokeball at " + pokemon + "...")
 
-	data := pokemonResponse{}
-	err := CachedFetch("https://pokeapi.co/api/v2/pokemon/"+pokemon, &data)
+	data, err := Fetch[pokemonResponse](
+		"https://pokeapi.co/api/v2/pokemon/" + pokemon,
+	)
 	if err != nil {
 		return err
 	}
