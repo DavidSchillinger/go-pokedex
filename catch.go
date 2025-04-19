@@ -3,8 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 )
 
 var CaughtPokemon = map[string]bool{}
@@ -31,28 +29,11 @@ func CommandCatch(args ...string) error {
 func printCatch(pokemon string) error {
 	fmt.Println("Throwing a Pokeball at " + pokemon + "...")
 
-	url := "https://pokeapi.co/api/v2/pokemon/" + pokemon
-
-	if data, ok := GlobalCache.Get(url); ok {
-		return processPokemonData(data)
-	}
-
-	res, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
-		return fmt.Errorf("expected status OK, got %v", res.Status)
-	}
-
-	data, err := io.ReadAll(res.Body)
+	data, err := CachedFetch("https://pokeapi.co/api/v2/pokemon/" + pokemon)
 	if err != nil {
 		return err
 	}
 
-	GlobalCache.Add(url, data)
 	return processPokemonData(data)
 }
 

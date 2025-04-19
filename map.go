@@ -3,8 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 )
 
 type locationAreaResponse struct {
@@ -17,7 +15,7 @@ type locationArea struct {
 
 var page = -1
 
-func CommandMapNext(...string) error {
+func CommandMapNext(_ ...string) error {
 	page++
 
 	err := printMap(page)
@@ -28,7 +26,7 @@ func CommandMapNext(...string) error {
 	return nil
 }
 
-func CommandMapBack(...string) error {
+func CommandMapBack(_ ...string) error {
 	if page == 0 {
 		fmt.Println("You're on the first page.")
 		return nil
@@ -46,27 +44,11 @@ func CommandMapBack(...string) error {
 
 func printMap(page int) error {
 	url := fmt.Sprintf("https://pokeapi.co/api/v2/location-area?limit=%d&offset=%d", 20, page*20)
-
-	if data, ok := GlobalCache.Get(url); ok {
-		return processMapData(data)
-	}
-
-	res, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
-		return fmt.Errorf("expected status OK, got %v", res.Status)
-	}
-
-	data, err := io.ReadAll(res.Body)
+	data, err := CachedFetch(url)
 	if err != nil {
 		return err
 	}
 
-	GlobalCache.Add(url, data)
 	return processMapData(data)
 }
 

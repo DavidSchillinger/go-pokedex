@@ -3,8 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 )
 
 type locationAreaDetailResponse struct {
@@ -22,41 +20,18 @@ type pokemon struct {
 func CommandExplore(args ...string) error {
 	if len(args) == 0 {
 		fmt.Println("Please provide an area to explore!")
+		return nil
 	}
 
-	err := printExplore(args[0])
-	if err != nil {
-		return err
-	}
+	area := args[0]
 
-	return nil
-}
-
-func printExplore(area string) error {
 	fmt.Println("Exploring " + area + "...")
 
-	url := "https://pokeapi.co/api/v2/location-area/" + area
-
-	if data, ok := GlobalCache.Get(url); ok {
-		return processEncounterData(data)
-	}
-
-	res, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
-		return fmt.Errorf("expected status OK, got %v", res.Status)
-	}
-
-	data, err := io.ReadAll(res.Body)
+	data, err := CachedFetch("https://pokeapi.co/api/v2/location-area/" + area)
 	if err != nil {
 		return err
 	}
 
-	GlobalCache.Add(url, data)
 	return processEncounterData(data)
 }
 

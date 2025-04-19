@@ -3,8 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 )
 
 type pokemonDetailResponse struct {
@@ -48,28 +46,11 @@ func CommandInspect(args ...string) error {
 }
 
 func printInspect(pokemon string) error {
-	url := "https://pokeapi.co/api/v2/pokemon/" + pokemon
-
-	if data, ok := GlobalCache.Get(url); ok {
-		return processPokemonDetailData(data)
-	}
-
-	res, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
-		return fmt.Errorf("expected status OK, got %v", res.Status)
-	}
-
-	data, err := io.ReadAll(res.Body)
+	data, err := CachedFetch("https://pokeapi.co/api/v2/pokemon/" + pokemon)
 	if err != nil {
 		return err
 	}
 
-	GlobalCache.Add(url, data)
 	return processPokemonDetailData(data)
 }
 
